@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #14120f;
+  --color-ink-soft: #6b6560;
+  --color-ink-faint: #9c948d;
+  --color-hair: #e8e5e1;
+  --color-hair-strong: #d6d2cc;
+  --color-oak: #c08b4c;
+  --color-oak-soft: #e3c9a5;
+  --color-walnut: #6b4a2f;
+  --color-wenge: #3a2c22;
+  --color-glass: #b9d3ca;
+  --color-paper: #ffffff;
+  --color-paper-dim: #fbfaf9;
+  /* наведение на основную кнопку: чуть светлее ink, но всё ещё почти чёрный */
+  --color-ink-hover: #33302b;
+
+  --font-display: var(--font-display), "Inter Tight", ui-sans-serif, system-ui,
+    sans-serif;
+  --font-sans: var(--font-body), Inter, ui-sans-serif, system-ui, sans-serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv01";
+  }
+
+  ::selection {
+    background: var(--color-ink);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  /* Заголовки: плотный гротеск, как на референсе TAKT */
+  .font-display {
+    font-family: var(--font-display);
+    font-feature-settings: "ss03";
+  }
+
+  .tracking-tightest {
+    letter-spacing: -0.045em;
+  }
+
+  .label-caps {
+    font-size: 0.6875rem;
+    line-height: 1;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .hairline {
+    border-color: var(--color-hair);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
