@@ -4,7 +4,12 @@ export const site = {
   name: "Reuve Craft",
   legalName: "Мастерская Reuve Craft",
   tagline: "мебель из массива",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://gran-mebel.ru",
+  /**
+   * Канонический адрес. Через `||`, а не `??`: незаданная переменная
+   * репозитория приходит в CI пустой строкой, а `??` её пропускает —
+   * сборка падала на `new URL("")` в `layout.tsx`.
+   */
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://gran-mebel.ru",
   phone: "+7 (999) 000-00-00",
   phoneHref: "tel:+79990000000",
   city: "Москва",
