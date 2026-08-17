@@ -9,7 +9,7 @@ export const site = {
    * репозитория приходит в CI пустой строкой, а `??` её пропускает —
    * сборка падала на `new URL("")` в `layout.tsx`.
    */
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://gran-mebel.ru",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://reuve.ru",
   phone: "+7 (999) 000-00-00",
   phoneHref: "tel:+79990000000",
   city: "Москва",

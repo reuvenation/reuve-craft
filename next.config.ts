@@ -5,9 +5,8 @@ import type { NextConfig } from "next";
  * Серверных маршрутов нет: заявки уходят из браузера прямо в Supabase
  * (см. `src/lib/leads.ts`), уведомление в Telegram шлёт триггер в базе.
  *
- * BASE_PATH нужен, пока сайт живёт в подпапке `/reuve-craft` на
- * reuvenation.github.io. После переезда на свой домен собирать без него:
- * `BASE_PATH= npm run build`.
+ * BASE_PATH нужен, только если сайт лежит в подпапке. На своём домене
+ * reuve.ru он пустой — сайт в корне (домен прописан в `public/CNAME`).
  */
 const basePath = process.env.BASE_PATH ?? "";
 
