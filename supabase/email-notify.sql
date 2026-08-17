@@ -10,13 +10,18 @@
 --
 -- Где взять: resend.com → API Keys → Create API Key (ключ вида re_...).
 --
--- Про адрес отправителя (FROM_EMAIL):
---   * пока домен reuve.ru не подтверждён в Resend — только
---     onboarding@resend.dev, и письма уходят ТОЛЬКО на адрес владельца
---     аккаунта Resend. Нам этого достаточно: заявки идут владельцу;
---   * после подтверждения домена (Resend → Domains → добавить reuve.ru
---     и прописать выданные DNS-записи в Рег.ру) можно слать
---     с zayavka@reuve.ru на любые адреса.
+-- Про адрес отправителя. Письма уходят с домена fullbody-tracker.ru,
+-- хотя сайт живёт на reuve.ru, и это сделано намеренно:
+--   * бесплатный план Resend разрешает ОДИН подтверждённый домен,
+--     и он занят fullbody-tracker.ru (проект FullBody, там на нём висит
+--     почта Supabase Auth — трогать нельзя);
+--   * с onboarding@resend.dev письма уходили бы только на адрес владельца
+--     аккаунта (reuvenations@gmail.com), а заявки нужны на kotov_95@mail.ru;
+--   * подтверждённый домен снимает это ограничение — можно слать на любой
+--     адрес. Чужой домен в поле «От кого» тут ни на что не влияет:
+--     письмо читает только владелец сайта.
+-- Если завести reuve.ru в Resend (нужен Pro) или отдельный аккаунт в другом
+-- сервисе — поменять `from` на zayavka@reuve.ru, остальное не трогать.
 --
 -- Выполнить один раз: Supabase → SQL Editor → Run.
 
@@ -57,7 +62,7 @@ begin
       'Authorization', 'Bearer RESEND_API_KEY'
     ),
     body    := jsonb_build_object(
-      'from',    'Reuve Craft <onboarding@resend.dev>',
+      'from',    'Reuve Craft <reuve-craft@fullbody-tracker.ru>',
       'to',      jsonb_build_array('kotov_95@mail.ru'),
       'subject', subj,
       'text',    body_text
