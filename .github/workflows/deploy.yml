@@ -1,0 +1,60 @@
+name: Deploy to GitHub Pages
+
+# Сайт статический (`output: "export"` в next.config.ts): сборка кладёт
+# готовые файлы в out/, оттуда их забирает Pages. Серверной части нет.
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Параллельные выкладки не нужны: держим одну и не рвём начатую
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build static export
+        env:
+          # Пока сайт живёт в подпапке reuvenation.github.io/reuve-craft,
+          # basePath обязателен — без него отвалятся css, js и картинки.
+          # После привязки своего домена обе переменные меняются на него,
+          # а BASE_PATH становится пустым.
+          BASE_PATH: ${{ vars.BASE_PATH }}
+          NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL }}
+        run: npm run build
+
+      - name: Disable Jekyll
+        # иначе Pages выкинет файлы и папки, начинающиеся с подчёркивания
+        # (_next — это весь css и js сайта)
+        run: touch out/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

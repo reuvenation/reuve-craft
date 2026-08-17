@@ -2,11 +2,16 @@ import Link from "next/link";
 import { LogoMark } from "@/components/icons";
 import { site } from "@/lib/site";
 
-/** Шапка второго варианта: знак, название и расшифровка. */
+/**
+ * Шапка боевого сайта: знак, название и расшифровка.
+ *
+ * Высота задана жёстко (`h-20` = 5rem) не ради вида, а чтобы первый экран
+ * считался без магических чисел: hero занимает `100svh` минус эти 5rem.
+ */
 export function HeaderV2() {
   return (
-    <header className="mx-auto flex max-w-[1440px] items-center gap-4 px-5 pt-8 sm:px-8 lg:px-12">
-      <Link href="/v2" className="flex items-center gap-3">
+    <header className="mx-auto flex h-20 max-w-[1440px] items-center gap-4 px-5 sm:px-8 lg:px-12">
+      <Link href="/" className="flex items-center gap-3">
         <LogoMark className="h-4 w-6 text-ink" />
         <span className="font-display text-[17px] font-extrabold tracking-tightest">
           {site.name}
@@ -26,7 +31,7 @@ export function FooterV2() {
       <span>
         {site.name} © {new Date().getFullYear()} · {site.seller}
       </span>
-      <Link href="/v2/privacy" className="transition-colors hover:text-ink">
+      <Link href="/privacy" className="transition-colors hover:text-ink">
         Политика обработки персональных данных
       </Link>
     </footer>

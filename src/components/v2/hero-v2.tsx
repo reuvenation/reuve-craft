@@ -18,9 +18,16 @@ const rise = {
 
 export function HeroV2() {
   return (
-    <section id="top" className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
+    /* Первый экран занимает всё окно: 100svh минус шапка (h-20 = 5rem).
+       Так следующая секция гарантированно начинается за сгибом и её кадр
+       с выносками не подглядывает снизу. На узких экранах контент выше
+       окна — тогда `min-h` просто не срабатывает и секция растёт сама. */
+    <section
+      id="top"
+      className="mx-auto flex min-h-[calc(100svh-5rem)] max-w-[1440px] flex-col justify-center px-5 pb-12 sm:px-8 lg:px-12"
+    >
       {/* колонки одной высоты: форма тянется от строки заголовка до низа кадра */}
-      <div className="grid grid-cols-1 items-stretch gap-12 pt-10 lg:grid-cols-12 lg:gap-16 lg:pt-14">
+      <div className="grid grid-cols-1 items-stretch gap-12 pt-6 lg:grid-cols-12 lg:gap-16 lg:pt-8">
         <div className="lg:col-span-7 lg:flex lg:flex-col">
           <motion.h1
             custom={0}

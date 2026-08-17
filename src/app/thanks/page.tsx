@@ -5,13 +5,13 @@ import { FooterV2, HeaderV2 } from "@/components/v2/site-chrome";
 
 export const metadata: Metadata = {
   title: "Спасибо за заявку",
-  alternates: { canonical: "/v2/thanks" },
+  alternates: { canonical: "/thanks" },
   robots: { index: false, follow: false },
 };
 
 /**
  * Отдельный URL после отправки формы — на него настраивается цель
- * в Яндекс.Метрике / Google Analytics («посещение страницы /v2/thanks»).
+ * в Яндекс.Метрике / Google Analytics («посещение страницы /thanks»).
  */
 export default function ThanksPage() {
   return (
@@ -34,7 +34,7 @@ export default function ThanksPage() {
           </p>
 
           <Link
-            href="/v2"
+            href="/"
             className="mt-10 inline-flex cursor-pointer items-center border-b border-ink pb-1 text-[14px] font-medium tracking-tight text-ink transition-opacity hover:opacity-60"
           >
             Вернуться на сайт

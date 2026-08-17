@@ -10,8 +10,9 @@ import {
   TelegramIcon,
   WhatsappIcon,
 } from "@/components/icons";
+import { sendLead } from "@/lib/leads";
 import { formatPhone, isPhoneComplete } from "@/lib/phone";
-import { messengers, product, type MessengerId } from "@/lib/site";
+import { messengers, type MessengerId } from "@/lib/site";
 
 const icons = {
   telegram: TelegramIcon,
@@ -45,28 +46,19 @@ export function LeadFormV2() {
     if (name.trim().length < 2) return setError("Как к вам обращаться?");
     if (!isPhoneComplete(phone)) return setError("Проверьте номер телефона");
 
+    // honeypot: у людей поле пустое, боты его заполняют
+    if (honeypot.current?.value) return router.push("/thanks");
+
     setStatus("sending");
     try {
-      const res = await fetch("/api/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: name.trim(),
-          phone,
-          messenger,
-          product: product.model,
-          company: honeypot.current?.value ?? "",
-        }),
+      await sendLead({
+        name: name.trim(),
+        phone,
+        messenger,
+        page: "Главная",
       });
 
-      if (!res.ok) {
-        const data = (await res.json().catch(() => null)) as {
-          error?: string;
-        } | null;
-        throw new Error(data?.error ?? "Не удалось отправить заявку");
-      }
-
-      router.push("/v2/thanks");
+      router.push("/thanks");
     } catch (err) {
       setStatus("error");
       setError(
@@ -198,7 +190,7 @@ export function LeadFormV2() {
         <p className="mt-4 text-[11.5px] leading-relaxed text-ink-faint">
           Нажимая кнопку, вы соглашаетесь с{" "}
           <Link
-            href="/v2/privacy"
+            href="/privacy"
             className="underline underline-offset-2 transition-colors hover:text-ink"
           >
             политикой обработки персональных данных

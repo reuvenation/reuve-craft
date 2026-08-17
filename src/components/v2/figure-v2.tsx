@@ -7,6 +7,21 @@ import { product } from "@/lib/site";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
+/* ── Сценарий появления ─────────────────────────────────────────────
+   Блок целиком лежит за сгибом, поэтому его можно разыграть по порядку:
+   сначала проявляется кадр, затем от изделия по очереди прорастают
+   выноски, и только после того, как линия дорисована, выезжает подпись.
+   Числа в секундах — точки входа относительно момента, когда секция
+   попала в зону видимости. */
+const IMAGE_IN = 1.2; // выход кадра, как у главного кадра в DESIGN.md
+const LINE_START = 0.55; // первая линия трогается, пока кадр ещё проявляется
+const LINE_DRAW = 0.75; // сколько рисуется сама линия
+const STEP = 0.18; // сдвиг между соседними выносками
+const LABEL_GAP = 0.55; // подпись выезжает, когда линия почти дошла
+
+const lineDelay = (i: number) => LINE_START + i * STEP;
+const labelDelay = (i: number) => lineDelay(i) + LABEL_GAP;
+
 /* ── Геометрия оверлея ──────────────────────────────────────────────
    Система координат viewBox 1100 × 460; кадр 1072×584 вписан по ширине
    с полями 22 %. Точки anchor — те же доли кадра, что в первом варианте:
@@ -72,7 +87,9 @@ const callouts: Callout[] = [
 /** Статичный кадр столика с тонкими выносками — без переключателей. */
 export function FigureV2() {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-15% 0px" });
+  // запускаем, когда блок зашёл в окно на пятую часть высоты — то есть
+  // человек действительно долистал до него, а не «зацепил» краем
+  const inView = useInView(ref, { once: true, margin: "-20% 0px" });
 
   return (
     <section
@@ -81,7 +98,12 @@ export function FigureV2() {
     >
       <div ref={ref} className="relative mx-auto w-full max-w-[1240px]">
         <div className="relative aspect-[16/10] w-full sm:aspect-[1100/460]">
-          <div className="absolute inset-y-0 right-[6%] left-[6%] lg:right-[21%] lg:left-[21%]">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.985 }}
+            animate={inView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: IMAGE_IN, ease }}
+            className="absolute inset-y-0 right-[6%] left-[6%] lg:right-[21%] lg:left-[21%]"
+          >
             <Image
               src="/images/table-oak-hero.jpg"
               alt={`${product.shortName}: каркас из массива дуба и столешница из закалённого стекла`}
@@ -89,7 +111,7 @@ export function FigureV2() {
               sizes="(max-width: 1024px) 92vw, 55vw"
               className="object-contain select-none"
             />
-          </div>
+          </motion.div>
 
           {/* линии-выноски */}
           <svg
@@ -112,8 +134,13 @@ export function FigureV2() {
                     className="text-ink"
                     initial={{ pathLength: 0 }}
                     animate={inView ? { pathLength: 1 } : {}}
-                    transition={{ duration: 0.9, delay: 0.1 + i * 0.12, ease }}
+                    transition={{
+                      duration: LINE_DRAW,
+                      delay: lineDelay(i),
+                      ease,
+                    }}
                   />
+                  {/* точка ставится на изделие первой — из неё растёт линия */}
                   <motion.circle
                     cx={ax}
                     cy={ay}
@@ -121,7 +148,11 @@ export function FigureV2() {
                     className="fill-ink"
                     initial={{ scale: 0, opacity: 0 }}
                     animate={inView ? { scale: 1, opacity: 1 } : {}}
-                    transition={{ duration: 0.4, delay: 0.1 + i * 0.12, ease }}
+                    transition={{
+                      duration: 0.35,
+                      delay: lineDelay(i) - 0.15,
+                      ease,
+                    }}
                     style={{ transformOrigin: `${ax}px ${ay}px` }}
                   />
                 </g>
@@ -146,9 +177,10 @@ export function FigureV2() {
                 <motion.p
                   key={c.id}
                   style={style}
-                  initial={{ opacity: 0, x: isLeft ? 12 : -12 }}
+                  // подпись словно выезжает из конца дорисованной линии
+                  initial={{ opacity: 0, x: isLeft ? 14 : -14 }}
                   animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.6, delay: 0.7 + i * 0.12, ease }}
+                  transition={{ duration: 0.7, delay: labelDelay(i), ease }}
                   className={`font-display absolute -translate-y-1/2 text-[14.5px] leading-tight font-semibold tracking-tight text-ink ${
                     isLeft ? "text-right" : "text-left"
                   }`}
@@ -162,13 +194,16 @@ export function FigureV2() {
 
         {/* то же самое списком — там, где выноски не помещаются */}
         <ul className="mt-10 grid grid-cols-2 gap-x-6 gap-y-4 lg:hidden">
-          {callouts.map((c) => (
-            <li
+          {callouts.map((c, i) => (
+            <motion.li
               key={c.id}
+              initial={{ opacity: 0, y: 14 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: labelDelay(i), ease }}
               className="font-display text-[14px] leading-snug font-semibold"
             >
               {c.title}
-            </li>
+            </motion.li>
           ))}
         </ul>
       </div>

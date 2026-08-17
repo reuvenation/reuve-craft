@@ -4,7 +4,7 @@ import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Политика обработки персональных данных",
-  alternates: { canonical: "/v2/privacy" },
+  alternates: { canonical: "/privacy" },
   robots: { index: false, follow: false },
 };
 

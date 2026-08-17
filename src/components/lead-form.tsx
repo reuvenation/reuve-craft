@@ -9,6 +9,7 @@ import {
   TelegramIcon,
   WhatsappIcon,
 } from "@/components/icons";
+import { sendLead } from "@/lib/leads";
 import { formatPhone, isPhoneComplete } from "@/lib/phone";
 import { messengers, product, type MessengerId } from "@/lib/site";
 
@@ -39,26 +40,17 @@ export function LeadForm() {
     if (!isPhoneComplete(phone)) return setError("Проверьте номер телефона");
     if (!agree) return setError("Нужно согласие на обработку данных");
 
+    // honeypot: у людей поле пустое, боты его заполняют
+    if (honeypot.current?.value) return setStatus("done");
+
     setStatus("sending");
     try {
-      const res = await fetch("/api/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: name.trim(),
-          phone,
-          messenger,
-          product: product.model,
-          company: honeypot.current?.value ?? "",
-        }),
+      await sendLead({
+        name: name.trim(),
+        phone,
+        messenger,
+        page: "Первый вариант",
       });
-
-      if (!res.ok) {
-        const data = (await res.json().catch(() => null)) as {
-          error?: string;
-        } | null;
-        throw new Error(data?.error ?? "Не удалось отправить заявку");
-      }
 
       setStatus("done");
     } catch (err) {
