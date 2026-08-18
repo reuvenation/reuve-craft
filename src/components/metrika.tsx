@@ -17,6 +17,11 @@ declare global {
  * Досылает просмотр при клиентской навигации. Форма уводит на `/thanks`
  * через `router.push`, а такой переход счётчик сам не замечает — без хита
  * цель «посещение /thanks» не сработает ни разу.
+ *
+ * Первый просмотр не досылаем: его отправляет сам `init`. Ставить в `init`
+ * `ssr: true` (он есть в сниппете, который предлагает Метрика) нельзя —
+ * с ним счётчик на боевом домене вообще не поднимался: `window.ym.a`
+ * копил вызовы, а `Ya._metrika.counters` оставался пустым.
  */
 function RouteHits() {
   const pathname = usePathname();
@@ -47,7 +52,7 @@ for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src =
 k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
 (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
 
-ym(${COUNTER_ID}, "init", {ssr:true, webvisor:true, clickmap:true, accurateTrackBounce:true, trackLinks:true});`}
+ym(${COUNTER_ID}, "init", {webvisor:true, clickmap:true, accurateTrackBounce:true, trackLinks:true});`}
       </Script>
       <Suspense fallback={null}>
         <RouteHits />
