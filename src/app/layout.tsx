@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import { MotionProvider } from "@/components/motion-provider";
+import { YandexMetrika } from "@/components/metrika";
 import { product, site } from "@/lib/site";
 
 const display = Inter_Tight({
@@ -75,6 +76,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full bg-white text-ink">
         <MotionProvider>{children}</MotionProvider>
+        <YandexMetrika />
       </body>
     </html>
   );
